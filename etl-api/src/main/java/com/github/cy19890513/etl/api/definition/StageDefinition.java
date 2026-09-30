@@ -1,5 +1,6 @@
 package com.github.cy19890513.etl.api.definition;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,5 +50,18 @@ public class StageDefinition {
     /** Sets the stage options. */
     public void setOptions(Map<String, String> options) {
         this.options = options == null ? new HashMap<>() : new HashMap<>(options);
+    }
+
+    /**
+     * Captures any YAML key that is not a typed field (e.g. {@code path},
+     * {@code sql}, {@code mode}) as a string option, so stage authors get
+     * their settings without model changes.
+     *
+     * @param key   the YAML key
+     * @param value the YAML value, coerced to string
+     */
+    @JsonAnySetter
+    public void setOption(String key, Object value) {
+        options.put(key, value == null ? null : value.toString());
     }
 }

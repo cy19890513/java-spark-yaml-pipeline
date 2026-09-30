@@ -1,0 +1,28 @@
+name: user-events-daily
+
+sources:
+  - name: raw_events
+    type: csv
+    options:
+      path: data/events.csv
+      header: "true"
+
+transforms:
+  - name: cleaned
+    type: sql
+    input: raw_events
+    sql: "SELECT user_id, event_type FROM __input__ WHERE user_id IS NOT NULL"
+
+quality:
+  - name: no_null_users
+    type: not_null
+    input: cleaned
+    columns: [user_id]
+    on_failure: fail
+
+sinks:
+  - name: gold_events
+    type: parquet
+    input: cleaned
+    path: ./data/output/events
+    mode: overwrite

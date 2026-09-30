@@ -1,0 +1,10 @@
+sources:
+  - name: raw
+    type: csv
+    path: data/a.csv
+
+sinks:
+  - name: out
+    type: parquet
+    input: raw
+    path: out/data
