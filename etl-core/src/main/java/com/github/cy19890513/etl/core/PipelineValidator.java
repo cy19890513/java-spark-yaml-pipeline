@@ -79,6 +79,10 @@ public final class PipelineValidator {
             if (!isBlank(transform.getName())) {
                 producers.add(transform.getName());
             }
+        }
+        // Check inputs only after every producer is known, so definition
+        // order never matters.
+        for (TransformDefinition transform : definition.getTransforms()) {
             checkInputs(transform.getName(), transform.getInputs(), names, producers, errors);
         }
         for (QualityDefinition check : definition.getQuality()) {
