@@ -36,6 +36,7 @@ public final class PipelineRunner {
 
     private final StageRegistry registry;
     private final SparkSession borrowedSession;
+    private final Map<String, String> sparkConf;
 
     /**
      * Creates a runner that opens and closes its own Spark session per run.
@@ -43,7 +44,18 @@ public final class PipelineRunner {
      * @param registry stage implementations to run
      */
     public PipelineRunner(StageRegistry registry) {
-        this(registry, null);
+        this(registry, Map.of());
+    }
+
+    /**
+     * Creates a runner that opens and closes its own Spark session per run,
+     * applying the given Spark configuration.
+     *
+     * @param registry  stage implementations to run
+     * @param sparkConf extra {@code spark.*} settings, e.g. {@code spark.master}
+     */
+    public PipelineRunner(StageRegistry registry, Map<String, String> sparkConf) {
+        this(registry, null, sparkConf);
     }
 
     /**
@@ -54,8 +66,14 @@ public final class PipelineRunner {
      * @param session  session to run on, never stopped by this runner
      */
     public PipelineRunner(StageRegistry registry, SparkSession session) {
+        this(registry, session, Map.of());
+    }
+
+    private PipelineRunner(StageRegistry registry, SparkSession session,
+            Map<String, String> sparkConf) {
         this.registry = registry;
         this.borrowedSession = session;
+        this.sparkConf = Map.copyOf(sparkConf);
     }
 
     /**
@@ -70,7 +88,7 @@ public final class PipelineRunner {
 
         SparkSession spark = borrowedSession != null
                 ? borrowedSession
-                : SparkSessionFactory.create("etl-" + definition.getName());
+                : SparkSessionFactory.create("etl-" + definition.getName(), sparkConf);
         boolean ownsSession = borrowedSession == null;
         try {
             Map<String, Dataset<Row>> frames = new HashMap<>();

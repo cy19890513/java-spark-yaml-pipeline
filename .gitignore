@@ -32,3 +32,8 @@ logs/
 # Local run outputs
 data/output/
 checkpoints/
+
+# build artifacts
+dependency-reduced-pom.xml
+# sample run output
+examples/output/
