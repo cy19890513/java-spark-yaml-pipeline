@@ -1,5 +1,6 @@
 package com.github.cy19890513.etl.api.definition;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,5 +23,16 @@ public class TransformDefinition extends StageDefinition {
     /** Sets the upstream stage names. */
     public void setInputs(List<String> inputs) {
         this.inputs = inputs == null ? new ArrayList<>() : new ArrayList<>(inputs);
+    }
+
+    /**
+     * Accepts the singular {@code input:} YAML key as shorthand for a
+     * one-element {@code inputs} list.
+     *
+     * @param input single upstream stage name
+     */
+    @JsonSetter("input")
+    public void setInput(String input) {
+        this.inputs = input == null ? new ArrayList<>() : new ArrayList<>(List.of(input));
     }
 }

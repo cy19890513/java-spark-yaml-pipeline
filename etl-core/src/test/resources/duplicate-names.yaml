@@ -1,0 +1,18 @@
+name: duplicate-names
+
+sources:
+  - name: raw
+    type: csv
+    path: data/a.csv
+
+transforms:
+  - name: raw
+    type: sql
+    input: raw
+    sql: "SELECT * FROM __input__"
+
+sinks:
+  - name: out
+    type: parquet
+    input: raw
+    path: out/data
