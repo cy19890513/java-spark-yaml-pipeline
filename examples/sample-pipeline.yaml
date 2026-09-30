@@ -1,0 +1,33 @@
+# Sample pipeline: read users from CSV, keep adults, check ids, write Parquet.
+#
+# Run from the repository root:
+#   java -jar etl-cli/target/etl-cli-0.1.0-SNAPSHOT.jar examples/sample-pipeline.yaml
+name: sample-users
+
+sources:
+  - name: raw_users
+    type: csv
+    options:
+      path: examples/data/users.csv
+      header: "true"
+      inferSchema: "true"
+
+transforms:
+  - name: adults
+    type: sql
+    input: raw_users
+    sql: "SELECT id, name, age FROM __input__ WHERE age >= 18"
+
+quality:
+  - name: id_not_null
+    type: not_null
+    input: adults
+    columns: [id]
+    on_failure: fail
+
+sinks:
+  - name: adult_users
+    type: parquet
+    input: adults
+    path: examples/output/adult_users
+    mode: overwrite

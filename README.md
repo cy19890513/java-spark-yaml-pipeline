@@ -40,6 +40,27 @@ Run it:
 java -jar etl-cli/target/etl-cli-0.1.0-SNAPSHOT.jar pipeline.yaml
 ```
 
+Options:
+
+```bash
+java -jar etl-cli/target/etl-cli-0.1.0-SNAPSHOT.jar pipeline.yaml \
+  --master spark://cluster:7077 \
+  --conf spark.executor.memory=4g
+```
+
+`--master` defaults to `local[*]`; `--conf key=value` can be repeated for
+any Spark setting. Exit codes: 0 success, 1 bad arguments or unreadable
+YAML, 2 validation failure, 3 fail-fast quality abort, 4 other errors.
+
+Try the bundled sample from the repository root:
+
+```bash
+java -jar etl-cli/target/etl-cli-0.1.0-SNAPSHOT.jar examples/sample-pipeline.yaml
+```
+
+It reads `examples/data/users.csv`, keeps the adult users, checks that no
+id is null, and writes Parquet to `examples/output/adult_users`.
+
 ## Architecture
 
 ```
