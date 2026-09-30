@@ -8,7 +8,7 @@ import com.github.cy19890513.etl.api.Severity;
 public class QualityDefinition extends StageDefinition {
 
     private String input;
-    private Severity onFailure = Severity.FAIL;
+    private Severity onFailure;
 
     /** Returns the upstream stage name this check validates. */
     public String getInput() {
@@ -21,14 +21,18 @@ public class QualityDefinition extends StageDefinition {
     }
 
     /**
-     * Returns what happens when the check fails; defaults to {@link Severity#FAIL}.
+     * Returns the user-declared failure policy, or null when the YAML did not
+     * set {@code on_failure}. The runner falls back to the check result's own
+     * severity in that case.
+     *
+     * @return the declared policy, or null when unset
      */
     public Severity getOnFailure() {
         return onFailure;
     }
 
-    /** Sets what happens when the check fails. */
+    /** Sets the failure policy; null means "use the check's own severity". */
     public void setOnFailure(Severity onFailure) {
-        this.onFailure = onFailure == null ? Severity.FAIL : onFailure;
+        this.onFailure = onFailure;
     }
 }
